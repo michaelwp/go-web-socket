@@ -1,1 +1,1 @@
-# go-socket-io
+# go-web-socket
