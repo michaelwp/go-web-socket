@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 var upgrader = websocket.Upgrader{
@@ -29,7 +32,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func reader(conn *websocket.Conn) {
-	var resp Response
+	// var resp Response
 	for {
 		_, p, err := conn.ReadMessage()
 		if err != nil {
@@ -39,13 +42,25 @@ func reader(conn *websocket.Conn) {
 
 		logrus.Info("Message from client : " + string(p))
 
-		resp.Code = 1
-		resp.Message = "WebSocket"
-		resp.Data = nil
+		for i := 0; i < 10; i++ {
 
-		if err := conn.WriteJSON(resp); err != nil {
-			logrus.Error(err)
-			return
+			//resp.Code = 1
+			//resp.Message = "hi from server golang!"
+			//resp.Data = nil
+
+			//if err := conn.WriteJSON(resp); err != nil {
+			//	logrus.Error(err)
+			//	return
+			//}
+
+			time.Sleep(5 * time.Second)
+
+			message := []byte(strconv.Itoa(i))
+
+			if err := conn.WriteMessage(1, message); err != nil {
+				logrus.Error(err)
+				return
+			}
 		}
 	}
 }
